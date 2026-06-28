@@ -19,6 +19,7 @@ import Chatbot from './pages/Chatbot'
 import Documents from './pages/Documents'
 import Workflow from './pages/Workflow'
 import Analytics from './pages/Analytics'
+import QuestionPaper from './pages/QuestionPaper'
 
 function AppRoutes() {
   return (
@@ -45,6 +46,7 @@ function AppRoutes() {
         { path: '/documents',   element: <Documents /> },
         { path: '/workflow',    element: <Workflow /> },
         { path: '/analytics',   element: <Analytics /> },
+        { path: '/question-paper', element: <QuestionPaper /> },
       ].map(({ path, element }) => (
         <Route key={path} path={path} element={
           <ProtectedRoute>

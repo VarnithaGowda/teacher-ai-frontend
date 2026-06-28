@@ -6,9 +6,20 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import {
-  LayoutDashboard, BookOpen, ClipboardList, UserCheck,
-  MessageSquare, Upload, Workflow, BarChart2, LogOut,
-  Menu, X, GraduationCap, ChevronRight
+  LayoutDashboard,
+  BookOpen,
+  ClipboardList,
+  UserCheck,
+  MessageSquare,
+  Upload,
+  Workflow,
+  BarChart2,
+  LogOut,
+  Menu,
+  X,
+  GraduationCap,
+  ChevronRight,
+  FileText
 } from 'lucide-react'
 
 const navItems = [
@@ -20,6 +31,7 @@ const navItems = [
   { path: '/documents',   label: 'Documents / RAG',  icon: Upload },
   { path: '/workflow',    label: 'AI Workflow',      icon: Workflow },
   { path: '/analytics',   label: 'Analytics',        icon: BarChart2 },
+  { path: '/question-paper', label: 'Question Papers', icon: FileText }
 ]
 
 export default function Layout({ children }) {

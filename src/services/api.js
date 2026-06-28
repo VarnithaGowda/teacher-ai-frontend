@@ -101,5 +101,19 @@ export const workflowAPI = {
   getHistory: () => api.get('/api/workflow/history'),
   getById: (id) => api.get(`/api/workflow/${id}`),
 }
+// ─── Question Paper API ───────────────────────────────────────
+
+export const questionPaperAPI = {
+
+  generate: (data) =>
+    api.post('/api/question-paper/generate', data),
+
+  list: () =>
+    api.get('/api/question-paper/'),
+
+  getById: (id) =>
+    api.get(`/api/question-paper/${id}`),
+
+}
 
 export default api

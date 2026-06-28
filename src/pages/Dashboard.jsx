@@ -8,9 +8,18 @@ import { useAuth } from '../context/AuthContext'
 import { analyticsAPI } from '../services/api'
 import { StatCard } from '../components/Card'
 import { PageLoader } from '../components/LoadingSpinner'
+import AIStudioCard from '../components/AIStudioCard'
 import {
-  BookOpen, ClipboardList, UserCheck, FileText,
-  TrendingUp, ArrowRight, Sparkles, MessageSquare
+  BookOpen,
+  ClipboardList,
+  UserCheck,
+  FileText,
+  TrendingUp,
+  ArrowRight,
+  Sparkles,
+  MessageSquare,
+  Presentation,
+  ClipboardCheck
 } from 'lucide-react'
 
 const quickActions = [
@@ -18,6 +27,57 @@ const quickActions = [
   { label: 'Create Rubric',        path: '/rubric',      icon: ClipboardList, color: 'bg-purple-500' },
   { label: 'Evaluate Student',     path: '/evaluation',  icon: UserCheck, color: 'bg-green-500' },
   { label: 'Ask AI Chatbot',       path: '/chatbot',     icon: MessageSquare, color: 'bg-amber-500' },
+]
+const aiStudioTools = [
+
+  {
+    title: "Lesson Planner",
+    description: "Generate AI lesson plans instantly.",
+    icon: BookOpen,
+    color: "bg-indigo-500",
+    path: "/lesson-plan",
+  },
+
+  {
+    title: "Question Paper",
+    description: "Create university-style examination papers.",
+    icon: FileText,
+    color: "bg-blue-500",
+    path: "/question-paper",
+  },
+
+  {
+    title: "Rubric Generator",
+    description: "Generate grading rubrics using AI.",
+    icon: ClipboardList,
+    color: "bg-purple-500",
+    path: "/rubric",
+  },
+
+  {
+    title: "Worksheet",
+    description: "Generate classroom worksheets.",
+    icon: ClipboardCheck,
+    color: "bg-green-500",
+    path: "/worksheet",
+  },
+
+  {
+    title: "Quiz Generator",
+    description: "Create MCQ and subjective quizzes.",
+    icon: UserCheck,
+    color: "bg-orange-500",
+    path: "/quiz",
+  },
+
+  {
+    title: "PPT Generator",
+    description: "Generate AI teaching presentations.",
+    icon: Presentation,
+    color: "bg-pink-500",
+    path: "/ppt",
+  }
+
 ]
 
 function ActivityBadge({ type }) {
@@ -79,6 +139,52 @@ export default function Dashboard() {
         <StatCard label="Evaluations"   value={stats?.total_evaluations ?? 0}    icon={UserCheck}    color="green" />
         <StatCard label="Avg Score"     value={stats?.average_score ? `${stats.average_score}%` : 'N/A'} icon={TrendingUp} color="amber" />
       </div>
+
+      {/* AI Studio */}
+
+<div>
+
+  <div className="flex items-center justify-between mb-4">
+
+    <div>
+
+      <h2 className="text-xl font-bold text-gray-900">
+
+        ✨ EduGenie AI Studio
+
+      </h2>
+
+      <p className="text-gray-500 text-sm">
+
+        Generate anything using AI
+
+      </p>
+
+    </div>
+
+  </div>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+    {
+
+      aiStudioTools.map((tool) => (
+
+        <AIStudioCard
+
+          key={tool.title}
+
+          {...tool}
+
+        />
+
+      ))
+
+    }
+
+  </div>
+
+</div>
 
       {/* Quick Actions */}
       <div>
