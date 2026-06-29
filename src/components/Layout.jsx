@@ -145,6 +145,7 @@ export default function Layout({ children }) {
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           {children}
+          {/* <FloatingAIAssistant /> */}
         </main>
       </div>
     </div>
