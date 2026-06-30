@@ -1,35 +1,37 @@
 /**
- * QuestionPaper.jsx
+ * PPTGenerator.jsx
  */
 import { useState } from 'react'
 import { FileText, Loader2 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { questionPaperAPI } from '../services/api'
-import html2pdf from "html2pdf.js";
-import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 
 
-export default function QuestionPaper(){
- const [form, setForm] = useState({
+export default function PPTGenerator() {
+  const [form, setForm] = useState({
 
   subject: "",
 
   grade_level: "3rd Semester",
 
-  exam_type: "Mid Semester",
+  exam_type: "Presentation",
 
   difficulty: "intermediate",
 
+  slides: 10,
+
   total_marks: 50,
 
-  duration: 90,
+  duration: 30,
 
   topics: "",
 
   instructions: "",
 
-  question_types: []
+  presentationStyle: "Academic",
+
+audience: "UG Students"
 
 })
  const [loading, setLoading] = useState(false)
@@ -76,18 +78,46 @@ const difficultyOptions = [
 
 ]
 
-const marksOptions = [
+const slideOptions = [
 
-  10,
-  20,
-  25,
-  30,
-  40,
-  50,
-  60,
-  75,
-  80,
-  100
+5,
+
+8,
+
+10,
+
+12,
+
+15,
+
+20
+
+]
+const presentationStyles = [
+
+"Academic",
+
+"Professional",
+
+"Interactive",
+
+"Seminar",
+
+"Workshop"
+
+]
+
+const audienceOptions = [
+
+"School Students",
+
+"Diploma Students",
+
+"UG Students",
+
+"PG Students",
+
+"Faculty"
 
 ]
 
@@ -113,6 +143,8 @@ const durationOptions = [
     const payload = {
   ...form,
 
+  total_marks: Math.max(Number(form.slides), 20),
+
   topics: form.topics
     .split(",")
     .map(topic => topic.trim())
@@ -120,6 +152,8 @@ const durationOptions = [
 }
 
 const res = await questionPaperAPI.generate(payload)
+    console.log("PPT API Response:", res.data);
+
     setGeneratedPaper(res.data)
 
   } catch (err) {
@@ -133,7 +167,7 @@ console.log(
 )
   console.error("Status:", err.response?.status)
 
-  alert("Failed to generate question paper.")
+  alert("Failed to generate PPT.")
 
 } finally {
     setLoading(false)
@@ -143,7 +177,7 @@ const handleCopy = async () => {
 
   if (!generatedPaper) {
 
-    alert("No question paper available to copy.");
+    alert("No PPT available to copy.");
 
     return;
 
@@ -152,11 +186,10 @@ const handleCopy = async () => {
   try {
 
     await navigator.clipboard.writeText(
-      generatedPaper.question_paper ||
-      JSON.stringify(generatedPaper, null, 2)
+      generatedPaper.worksheet || generatedPaper.question_paper || JSON.stringify(generatedPaper, null, 2)
     );
 
-    alert("Question paper copied successfully!");
+    alert("PPT copied successfully!");
 
   }
 
@@ -164,7 +197,7 @@ const handleCopy = async () => {
 
     console.error(error);
 
-    alert("Unable to copy question paper.");
+    alert("Unable to copy PPT.");
 
   }
 
@@ -173,7 +206,7 @@ const handlePrint = () => {
 
   if (!generatedPaper) {
 
-    alert("No question paper available to print.");
+    alert("No PPT available to print.");
 
     return;
 
@@ -187,7 +220,7 @@ const handlePrint = () => {
 
       <head>
 
-        <title>Question Paper</title>
+        <title>PPT</title>
 
         <style>
 
@@ -221,11 +254,13 @@ const handlePrint = () => {
 
       <body>
 
-        <h1>Question Paper</h1>
+        <h1>PPT</h1>
 
         <pre>
 
-${generatedPaper.question_paper}
+${generatedPaper.question_paper
+  ?.replace("# EDUGENIE AI", "")
+  ?.replace("## QUESTION PAPER", "## PPT")}
 
         </pre>
 
@@ -248,7 +283,7 @@ const handleDownloadWord = () => {
 
   if (!generatedPaper) {
 
-    alert("Generate a question paper first.");
+    alert("Generate a PPT first.");
 
     return;
 
@@ -256,7 +291,7 @@ const handleDownloadWord = () => {
 
   const content = `
 
-AI GENERATED QUESTION PAPER
+AI GENERATED PPT
 
 --------------------------------------------
 
@@ -264,13 +299,9 @@ Subject : ${form.subject}
 
 Grade : ${form.grade_level}
 
-Exam Type : ${form.exam_type}
-
 Difficulty : ${form.difficulty}
 
 Total Marks : ${form.total_marks}
-
-Duration : ${form.duration} Minutes
 
 --------------------------------------------
 
@@ -294,61 +325,17 @@ ${generatedPaper.question_paper}
 
     blob,
 
-    `${form.subject.replace(/\s+/g, "_")}_Question_Paper.doc`
+    `${form.subject.replace(/\s+/g, "_")}_PPT.doc`
 
   );
-
-};
-
-const handleDownloadPDF = () => {
-
-  const element = document.getElementById("question-paper-result");
-
-  if (!element) {
-    alert("Question paper not found.");
-    return;
-  }
-
-  const options = {
-  margin: [10, 10, 10, 10],
-
-  filename: `${form.subject}_Question_Paper.pdf`,
-
-  image: {
-    type: "jpeg",
-    quality: 0.98,
-  },
-
-  html2canvas: {
-    scale: 1.5,
-    useCORS: true,
-    scrollY: 0,
-    letterRendering: true,
-},
-
-  jsPDF: {
-    unit: "mm",
-    format: "a4",
-    orientation: "portrait",
-  },
-
-  pagebreak: {
-    mode: ["css", "legacy", "avoid-all"]
-}
-};
-
-  html2pdf()
-    .set(options)
-    .from(element)
-    .save();
 
 };
 
  return (
   <div className="max-w-6xl mx-auto space-y-6">
    <PageHeader
-    title="AI Question Paper Generator"
-    subtitle="Generate professional AI-powered question papers."
+    title="AI PPT Generator"
+    subtitle="Generate AI-powered classroom presentations."
     icon={FileText}
    />
    <div className="bg-white rounded-2xl shadow p-6">
@@ -412,31 +399,8 @@ const handleDownloadPDF = () => {
 
   <div>
 
-    <label className="block text-sm font-semibold text-gray-700 mb-2">
-      Exam Type
-    </label>
 
-    <select
-      name="exam_type"
-      value={form.exam_type}
-      onChange={handleChange}
-      className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
-    >
 
-      {examOptions.map((exam)=>(
-
-        <option
-          key={exam}
-          value={exam}
-        >
-
-          {exam}
-
-        </option>
-
-      ))}
-
-    </select>
 
   </div>
 
@@ -473,82 +437,155 @@ const handleDownloadPDF = () => {
 
   </div>
 
-  {/* Total Marks */}
 
-  <div>
 
-    <label className="block text-sm font-semibold text-gray-700 mb-2">
-      Total Marks
-    </label>
+  {/* Number of Slides */}
 
-    <select
-      name="total_marks"
-      value={form.total_marks}
-      onChange={handleChange}
-      className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
-    >
-      {marksOptions.map((mark) => (
+<div>
 
-        <option
-          key={mark}
-          value={mark}
-        >
-          {mark} Marks
-        </option>
+<label className="block text-sm font-semibold text-gray-700 mb-2">
 
-      ))}
-    </select>
+Number of Slides
 
-  </div>
+</label>
+
+<select
+
+name="slides"
+
+value={form.slides}
+
+onChange={handleChange}
+
+className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
+
+>
+
+{slideOptions.map((slide)=>(
+
+<option
+
+key={slide}
+
+value={slide}
+
+>
+
+{slide} Slides
+
+</option>
+
+))}
+
+</select>
 
 </div>
 
-{/* ================= DURATION ================= */}
+</div>
+
+{/* ================= PRESENTATION STYLE ================= */}
 
 <div>
 
   <label className="block text-sm font-semibold text-gray-700 mb-2">
-    Duration
+
+    Presentation Style
+
   </label>
 
   <select
-    name="duration"
-    value={form.duration}
+
+    name="presentationStyle"
+
+    value={form.presentationStyle}
+
     onChange={handleChange}
+
     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
+
   >
-    {durationOptions.map((time) => (
+
+    {presentationStyles.map((style) => (
 
       <option
-        key={time}
-        value={time}
+
+        key={style}
+
+        value={style}
+
       >
-        {time} Minutes
+
+        {style}
+
       </option>
 
     ))}
+
   </select>
 
 </div>
+
+{/* ================= TARGET AUDIENCE ================= */}
+
+<div>
+
+  <label className="block text-sm font-semibold text-gray-700 mb-2">
+
+    Target Audience
+
+  </label>
+
+  <select
+
+    name="audience"
+
+    value={form.audience}
+
+    onChange={handleChange}
+
+    className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
+
+  >
+
+    {audienceOptions.map((audience) => (
+
+      <option
+
+        key={audience}
+
+        value={audience}
+
+      >
+
+        {audience}
+
+      </option>
+
+    ))}
+
+  </select>
+
+</div>
+
+
 {/* ================= TOPICS ================= */}
 
 <div>
 
   <label className="block text-sm font-semibold text-gray-700 mb-2">
-    Topics <span className="text-red-500">*</span>
-  </label>
+  Presentation Topic <span className="text-red-500">*</span>
+</label>
 
   <textarea
     rows={4}
     name="topics"
     value={form.topics}
     onChange={handleChange}
-    placeholder="Example: Arrays, Linked List, Queue, Trees"
-    className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
+placeholder="Example: Introduction to Data Structures, Arrays, Linked Lists"    className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
   />
 
   <p className="text-xs text-gray-500 mt-2">
-    💡 Separate multiple topics using commas.
+    💡 Enter the main topics you want to include in the presentation.
   </p>
 
 </div>
@@ -557,9 +594,9 @@ const handleDownloadPDF = () => {
 
 <div>
 
-  <label className="block text-sm font-semibold text-gray-700 mb-2">
-    Additional Instructions
-  </label>
+ <label className="block text-sm font-semibold text-gray-700 mb-2">
+  Learning Objectives
+</label>
 
   <textarea
     rows={4}
@@ -567,16 +604,15 @@ const handleDownloadPDF = () => {
     value={form.instructions}
     onChange={handleChange}
     placeholder="Example:
-• Include Bloom's Taxonomy questions
-• Add numerical problems
-• Avoid MCQs
-• Include case study questions"
+• Explain Arrays with examples
+• Include real-world applications
+• Add diagrams wherever applicable
+• End with a summary slide"
     className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
   />
 
   <p className="text-xs text-gray-500 mt-2">
-    These instructions help the AI generate a better question paper.
-  </p>
+These objectives help the AI create a more structured presentation.  </p>
 
 </div>
      <button
@@ -609,10 +645,10 @@ const handleDownloadPDF = () => {
       <Loader2 className="w-6 h-6 animate-spin" />
 
       <div className="text-left">
-        <p>Generating Question Paper...</p>
+        <p>Generating Slides...</p>
 
         <p className="text-xs opacity-80">
-          AI is preparing your questions...
+          AI is preparing your presentation slides...
         </p>
       </div>
     </>
@@ -620,7 +656,7 @@ const handleDownloadPDF = () => {
     <>
       <FileText className="w-6 h-6" />
 
-      Generate Question Paper
+      Generate PPT
     </>
   )}
 </button>
@@ -628,7 +664,7 @@ const handleDownloadPDF = () => {
     {generatedPaper && (
 
 <div
-    id="question-paper-result"
+    id="ppt-paper-result"
     style={{
     width: "800px",
     margin: "0 auto",
@@ -646,13 +682,13 @@ const handleDownloadPDF = () => {
 
                 <h2 className="text-2xl font-bold text-green-700">
 
-                    ✅ Question Paper Generated
+                    ✅ PPT Generated
 
                 </h2>
 
                 <p className="text-gray-600 mt-1">
 
-                    Your AI-generated question paper is ready.
+                     Your AI-generated presentation slides are ready.
 
                 </p>
 
@@ -706,18 +742,20 @@ className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
   }}
 >
   {generatedPaper.question_paper
-    ?.split("\n")
-    .map((line, index) => (
-      <p
-        key={index}
-        style={{
-          marginBottom: "8px",
-          pageBreakInside: "avoid",
-        }}
-      >
-        {line || "\u00A0"}
-      </p>
-    ))}
+  ?.replace("# EDUGENIE AI", "")
+  ?.replace("## QUESTION PAPER", "## PRESENTATION")
+  ?.split("\n")
+  .map((line, index) => (
+    <p
+      key={index}
+      style={{
+        marginBottom: "8px",
+        pageBreakInside: "avoid",
+      }}
+    >
+      {line || "\u00A0"}
+    </p>
+  ))}
 </div>
 
     </div>
@@ -729,3 +767,10 @@ className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
   </div>
  )
 }
+
+
+
+
+
+
+

@@ -46,6 +46,14 @@ const aiStudioTools = [
     path: "/question-paper",
   },
 
+   {
+    title: "Assignment Generator",
+    description: "Generate AI-powered assignments.",
+    icon: FileText,
+    color: "bg-blue-500",
+    path: "/assignment-generator",
+  },
+
   {
     title: "Rubric Generator",
     description: "Generate grading rubrics using AI.",

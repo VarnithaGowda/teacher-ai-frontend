@@ -1,35 +1,33 @@
 /**
- * QuestionPaper.jsx
+ * Worksheet.jsx
  */
 import { useState } from 'react'
 import { FileText, Loader2 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { questionPaperAPI } from '../services/api'
-import html2pdf from "html2pdf.js";
-import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 
 
-export default function QuestionPaper(){
+export default function Worksheet(){
  const [form, setForm] = useState({
 
   subject: "",
 
   grade_level: "3rd Semester",
 
-  exam_type: "Mid Semester",
+  exam_type: "Worksheet",
 
   difficulty: "intermediate",
 
   total_marks: 50,
 
-  duration: 90,
+  duration: 30,
 
   topics: "",
 
   instructions: "",
 
-  question_types: []
+  worksheetTypes: []
 
 })
  const [loading, setLoading] = useState(false)
@@ -120,6 +118,8 @@ const durationOptions = [
 }
 
 const res = await questionPaperAPI.generate(payload)
+    console.log("Worksheet API Response:", res.data);
+
     setGeneratedPaper(res.data)
 
   } catch (err) {
@@ -133,7 +133,7 @@ console.log(
 )
   console.error("Status:", err.response?.status)
 
-  alert("Failed to generate question paper.")
+  alert("Failed to generate Worksheet.")
 
 } finally {
     setLoading(false)
@@ -143,7 +143,7 @@ const handleCopy = async () => {
 
   if (!generatedPaper) {
 
-    alert("No question paper available to copy.");
+    alert("No worksheet available to copy.");
 
     return;
 
@@ -152,11 +152,10 @@ const handleCopy = async () => {
   try {
 
     await navigator.clipboard.writeText(
-      generatedPaper.question_paper ||
-      JSON.stringify(generatedPaper, null, 2)
+      generatedPaper.worksheet || generatedPaper.question_paper || JSON.stringify(generatedPaper, null, 2)
     );
 
-    alert("Question paper copied successfully!");
+    alert("Worksheet copied successfully!");
 
   }
 
@@ -164,7 +163,7 @@ const handleCopy = async () => {
 
     console.error(error);
 
-    alert("Unable to copy question paper.");
+    alert("Unable to copy worksheet.");
 
   }
 
@@ -173,7 +172,7 @@ const handlePrint = () => {
 
   if (!generatedPaper) {
 
-    alert("No question paper available to print.");
+    alert("No worksheet available to print.");
 
     return;
 
@@ -187,7 +186,7 @@ const handlePrint = () => {
 
       <head>
 
-        <title>Question Paper</title>
+        <title>Worksheet</title>
 
         <style>
 
@@ -221,11 +220,13 @@ const handlePrint = () => {
 
       <body>
 
-        <h1>Question Paper</h1>
+        <h1>Worksheet</h1>
 
         <pre>
 
-${generatedPaper.question_paper}
+${generatedPaper.question_paper
+  ?.replace("# EDUGENIE AI", "")
+  ?.replace("## QUESTION PAPER", "## WORKSHEET")}
 
         </pre>
 
@@ -248,7 +249,7 @@ const handleDownloadWord = () => {
 
   if (!generatedPaper) {
 
-    alert("Generate a question paper first.");
+    alert("Generate a worksheet first.");
 
     return;
 
@@ -256,7 +257,7 @@ const handleDownloadWord = () => {
 
   const content = `
 
-AI GENERATED QUESTION PAPER
+AI GENERATED WORKSHEET
 
 --------------------------------------------
 
@@ -264,13 +265,9 @@ Subject : ${form.subject}
 
 Grade : ${form.grade_level}
 
-Exam Type : ${form.exam_type}
-
 Difficulty : ${form.difficulty}
 
 Total Marks : ${form.total_marks}
-
-Duration : ${form.duration} Minutes
 
 --------------------------------------------
 
@@ -294,61 +291,17 @@ ${generatedPaper.question_paper}
 
     blob,
 
-    `${form.subject.replace(/\s+/g, "_")}_Question_Paper.doc`
+    `${form.subject.replace(/\s+/g, "_")}_Worksheet.doc`
 
   );
-
-};
-
-const handleDownloadPDF = () => {
-
-  const element = document.getElementById("question-paper-result");
-
-  if (!element) {
-    alert("Question paper not found.");
-    return;
-  }
-
-  const options = {
-  margin: [10, 10, 10, 10],
-
-  filename: `${form.subject}_Question_Paper.pdf`,
-
-  image: {
-    type: "jpeg",
-    quality: 0.98,
-  },
-
-  html2canvas: {
-    scale: 1.5,
-    useCORS: true,
-    scrollY: 0,
-    letterRendering: true,
-},
-
-  jsPDF: {
-    unit: "mm",
-    format: "a4",
-    orientation: "portrait",
-  },
-
-  pagebreak: {
-    mode: ["css", "legacy", "avoid-all"]
-}
-};
-
-  html2pdf()
-    .set(options)
-    .from(element)
-    .save();
 
 };
 
  return (
   <div className="max-w-6xl mx-auto space-y-6">
    <PageHeader
-    title="AI Question Paper Generator"
-    subtitle="Generate professional AI-powered question papers."
+    title="AI Worksheet Generator"
+    subtitle="Generate AI worksheets for classroom practice."
     icon={FileText}
    />
    <div className="bg-white rounded-2xl shadow p-6">
@@ -412,31 +365,8 @@ const handleDownloadPDF = () => {
 
   <div>
 
-    <label className="block text-sm font-semibold text-gray-700 mb-2">
-      Exam Type
-    </label>
 
-    <select
-      name="exam_type"
-      value={form.exam_type}
-      onChange={handleChange}
-      className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
-    >
 
-      {examOptions.map((exam)=>(
-
-        <option
-          key={exam}
-          value={exam}
-        >
-
-          {exam}
-
-        </option>
-
-      ))}
-
-    </select>
 
   </div>
 
@@ -507,27 +437,7 @@ const handleDownloadPDF = () => {
 
 <div>
 
-  <label className="block text-sm font-semibold text-gray-700 mb-2">
-    Duration
-  </label>
-
-  <select
-    name="duration"
-    value={form.duration}
-    onChange={handleChange}
-    className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-indigo-500"
-  >
-    {durationOptions.map((time) => (
-
-      <option
-        key={time}
-        value={time}
-      >
-        {time} Minutes
-      </option>
-
-    ))}
-  </select>
+  
 
 </div>
 {/* ================= TOPICS ================= */}
@@ -575,7 +485,7 @@ const handleDownloadPDF = () => {
   />
 
   <p className="text-xs text-gray-500 mt-2">
-    These instructions help the AI generate a better question paper.
+    These instructions help the AI generate a better Worksheet.
   </p>
 
 </div>
@@ -609,7 +519,7 @@ const handleDownloadPDF = () => {
       <Loader2 className="w-6 h-6 animate-spin" />
 
       <div className="text-left">
-        <p>Generating Question Paper...</p>
+        <p>Generating Worksheet...</p>
 
         <p className="text-xs opacity-80">
           AI is preparing your questions...
@@ -620,7 +530,7 @@ const handleDownloadPDF = () => {
     <>
       <FileText className="w-6 h-6" />
 
-      Generate Question Paper
+      Generate Worksheet
     </>
   )}
 </button>
@@ -628,7 +538,7 @@ const handleDownloadPDF = () => {
     {generatedPaper && (
 
 <div
-    id="question-paper-result"
+    id="worksheet-paper-result"
     style={{
     width: "800px",
     margin: "0 auto",
@@ -646,13 +556,13 @@ const handleDownloadPDF = () => {
 
                 <h2 className="text-2xl font-bold text-green-700">
 
-                    ✅ Question Paper Generated
+                    ✅ Worksheet Generated
 
                 </h2>
 
                 <p className="text-gray-600 mt-1">
 
-                    Your AI-generated question paper is ready.
+                    Your AI-generated Worksheet is ready.
 
                 </p>
 
@@ -706,6 +616,8 @@ className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
   }}
 >
   {generatedPaper.question_paper
+    ?.replace("# EDUGENIE AI", "")
+    ?.replace("## QUESTION PAPER", "## WORKSHEET")
     ?.split("\n")
     .map((line, index) => (
       <p
@@ -729,3 +641,10 @@ className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg"
   </div>
  )
 }
+
+
+
+
+
+
+

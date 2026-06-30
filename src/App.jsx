@@ -20,6 +20,10 @@ import Documents from './pages/Documents'
 import Workflow from './pages/Workflow'
 import Analytics from './pages/Analytics'
 import QuestionPaper from './pages/QuestionPaper'
+import AssignmentGenerator from "./pages/AssignmentGenerator";
+import Worksheet from "./pages/Worksheet";
+import Quiz from "./pages/Quiz";
+import PPTGenerator from "./pages/PPTGenerator";
 
 function AppRoutes() {
   return (
@@ -47,6 +51,10 @@ function AppRoutes() {
         { path: '/workflow',    element: <Workflow /> },
         { path: '/analytics',   element: <Analytics /> },
         { path: '/question-paper', element: <QuestionPaper /> },
+        { path: '/assignment-generator', element: <AssignmentGenerator /> },
+        { path: '/worksheet', element: <Worksheet /> },
+        { path: "/quiz", element: <Quiz /> },
+        { path: "/ppt", element: <PPTGenerator /> },
       ].map(({ path, element }) => (
         <Route key={path} path={path} element={
           <ProtectedRoute>
