@@ -94,7 +94,7 @@ export default function LessonPlan() {
               {[
                 { name: 'subject', label: 'Subject', placeholder: 'e.g. Mathematics' },
                 { name: 'topic', label: 'Topic', placeholder: 'e.g. Quadratic Equations' },
-                { name: 'grade_level', label: 'Grade Level', placeholder: 'e.g. Grade 10' },
+                { name: 'grade_level', label: 'Semester', placeholder: '"Select Semester"' },
               ].map(({ name, label, placeholder }) => (
                 <div key={name}>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">

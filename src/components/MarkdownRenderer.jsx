@@ -12,6 +12,26 @@ import 'katex/dist/katex.min.css'
 export default function MarkdownRenderer({ content, className = '' }) {
   if (!content) return null
 
+let fixedContent = content;
+
+// Fix broken markdown table separator
+fixedContent = fixedContent.replace(
+  /\|\s*:\-\-\|\:\|\:\-\-\|\:\-\-\|\:\-\-\|\:\-\-\|/g,
+  "|-----------|-------|----------------------|----------------------|----------------------|-------------------|"
+);
+
+// Add newline before table if missing
+fixedContent = fixedContent.replace(
+  /Rubric Table\s*\|/g,
+  "Rubric Table\n\n|"
+);
+
+// Add newline after separator row if AI merged text
+fixedContent = fixedContent.replace(
+  /\|-------------------\|([^\n])/g,
+  "|-------------------|\n$1"
+);  
+
   return (
     <div className={`markdown-content ${className}`}>
       <ReactMarkdown
@@ -51,7 +71,7 @@ export default function MarkdownRenderer({ content, className = '' }) {
           hr: ({ node, ...props }) => <hr className="my-3 border-gray-200" {...props} />,
         }}
       >
-        {content}
+        {fixedContent}
       </ReactMarkdown>
     </div>
   )

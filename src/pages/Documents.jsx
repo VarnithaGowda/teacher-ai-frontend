@@ -30,11 +30,18 @@ export default function Documents() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    ragAPI.listDocuments()
-      .then(res => setDocuments(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
+  ragAPI.listDocuments()
+    .then((res) => {
+      console.log("Documents:", res.data);
+      setDocuments(res.data);
+    })
+    .catch((err) => {
+      console.error("List Documents Error:", err);
+      console.error(err.response?.data);
+      toast.error(err.response?.data?.detail || "Failed to load documents");
+    })
+    .finally(() => setLoading(false));
+}, []);
 
   const handleUpload = async (file) => {
     if (!file) return

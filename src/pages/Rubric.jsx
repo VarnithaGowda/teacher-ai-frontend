@@ -173,7 +173,11 @@ export default function Rubric() {
                 icon={ClipboardList}
               />
               <div className="p-5">
-                <MarkdownRenderer content={result.rubric} />
+                <div className="overflow-x-auto">
+  <pre className="whitespace-pre-wrap text-sm font-mono bg-gray-50 p-4 rounded-lg">
+    {result.rubric}
+  </pre>
+</div>
               </div>
             </Card>
           )}
